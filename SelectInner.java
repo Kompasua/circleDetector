@@ -46,6 +46,9 @@ public class SelectInner extends Applet {
         /*
          * Begin of monitoring block
          */
+        double angle = getAngle(new Coordinate(5, 5), new Coordinate(5, 10), new Coordinate(10, 2));
+        System.out.println(angle);
+        //another test
         ArrayList<Integer> distances = new ArrayList<>();
         ArrayList<Coordinate> object = list;
         for (int i = 0; i < object.size(); i++) {
@@ -195,6 +198,15 @@ public class SelectInner extends Applet {
 
         }
         return contour;
+    }
+    
+    public double getAngle (Coordinate a, Coordinate b, Coordinate c){
+        Coordinate vector1 = new Coordinate(b.getX() - a.getX(), b.getY() - a.getY());
+        Coordinate vector2 = new Coordinate(c.getX() - a.getX(), c.getY() - a.getY());
+        double angle = ( vector1.getX()*vector2.getX() + vector1.getY()*vector2.getY() ) /
+                (Math.sqrt( Math.pow(vector1.getX(),2)+Math.pow(vector1.getY(),2) )*
+                Math.sqrt( Math.pow(vector2.getX(),2)+Math.pow(vector2.getY(),2) ));
+        return angle;
     }
 
     public void paint(Graphics gr) {

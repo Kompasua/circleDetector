@@ -52,6 +52,8 @@ public class SelectInner extends Applet {
         image.setRGB(segment.getA().getX(), segment.getA().getY(), 16711680);
         image.setRGB(segment.getB().getX(), segment.getB().getY(), 16711680);
         
+        getHalf(segment);
+        
         //another test
         ArrayList<Integer> distances = new ArrayList<>();
         ArrayList<Coordinate> object = list;
@@ -257,6 +259,32 @@ public class SelectInner extends Applet {
             }
         });*/
         return Collections.max(segments);
+    }
+    
+    public void getHalf(LSegment line){
+        for (int i = 0; i < HEIGHT; i++) {
+            for (int j = 0; j < WIDTH; j++) {
+                if (getPosition(line, new Coordinate(j, i)) == 1){
+                    image.setRGB(j, i, black);
+                }
+            }
+        }
+        
+    }
+    /**
+     * @param line 
+     * @param c - point coordinate
+     * @return 1 if on top, -1 if on bottom, 0 if on line
+     */
+    public int getPosition (LSegment line, Coordinate c){
+        Coordinate vector1 = new Coordinate(line.getB().getX() - line.getA().getX(), line.getB().getY() - line.getA().getY());
+        Coordinate vector2 = new Coordinate(c.getX() - line.getA().getX(), c.getY() - line.getA().getY());
+        double result  = vector1.getX()*vector2.getY() - vector1.getY()*vector2.getX();
+        if (result < 0)
+            return 1;
+        else if(result > 0)
+            return -1;
+        return 0;
     }
 
     public void paint(Graphics gr) {

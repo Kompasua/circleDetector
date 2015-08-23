@@ -47,12 +47,16 @@ public class SelectInner extends Applet {
         /*
          * Begin of monitoring block
          */
+        //show longest distance points
         LSegment segment =getLongestLSegment(list);
         System.out.println(segment.toString());
         image.setRGB(segment.getA().getX(), segment.getA().getY(), 16711680);
         image.setRGB(segment.getB().getX(), segment.getB().getY(), 16711680);
         
-        getHalf(segment);
+        //getHalf(segment, list, 1);
+        for (Coordinate co: getHalf(segment, list, 1) ){
+            image.setRGB(co.getX(), co.getY(), 205);
+        }
         
         //another test
         ArrayList<Integer> distances = new ArrayList<>();
@@ -260,17 +264,26 @@ public class SelectInner extends Applet {
         });*/
         return Collections.max(segments);
     }
-    
-    public void getHalf(LSegment line){
-        for (int i = 0; i < HEIGHT; i++) {
-            for (int j = 0; j < WIDTH; j++) {
-                if (getPosition(line, new Coordinate(j, i)) == 1){
-                    image.setRGB(j, i, black);
-                }
+    /**
+     * 
+     * @param line - sides separator
+     * @param contour of object
+     * @param side: -1 if on bottom, 1 if on top side
+     * @return array of contour points from given side
+     */
+    public  ArrayList<Coordinate> getHalf(LSegment line, ArrayList<Coordinate> contour, int side){
+        ArrayList<Coordinate> result = new ArrayList<>();
+        if (side != -1 || side != 1)
+            System.err.println("Invalid side argument. Can be only -1 or 1");
+        for (Coordinate point: contour){
+            if (getPosition(line, new Coordinate(point.getX(), point.getY())) == side){
+                result.add(point);
             }
         }
+        return result;
         
     }
+    
     /**
      * @param line 
      * @param c - point coordinate

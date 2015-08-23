@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 import javax.imageio.ImageIO;
 
@@ -40,14 +41,17 @@ public class SelectInner extends Applet {
         ArrayList<Coordinate> list = selectContour(intro, image);
         // Fill this contour with color
         for (Coordinate obj : list) {
-            image.setRGB(obj.getX(), obj.getY(), 16711680);
+            //image.setRGB(obj.getX(), obj.getY(), 16711680);
         }
         
         /*
          * Begin of monitoring block
          */
-        double angle = getAngle(new Coordinate(5, 5), new Coordinate(5, 10), new Coordinate(10, 2));
-        System.out.println(angle);
+        LSegment segment =getLongestLSegment(list);
+        System.out.println(segment.toString());
+        image.setRGB(segment.getA().getX(), segment.getA().getY(), 16711680);
+        image.setRGB(segment.getB().getX(), segment.getB().getY(), 16711680);
+        
         //another test
         ArrayList<Integer> distances = new ArrayList<>();
         ArrayList<Coordinate> object = list;
@@ -63,14 +67,24 @@ public class SelectInner extends Applet {
                     distance = dist;
                 }
             }
-            //image.setRGB(max1.getX(), max1.getY(), 16711680);
-            //image.setRGB(max2.getX(), max2.getY(), 16711680);
+            //image.setRGB(max1.getX()+1, max1.getY(), -16776961);
+            //image.setRGB(max2.getX()+1, max2.getY(), -16776961);
             distances.add(distance);
         }
-        
+        // Get angels
+        ArrayList<Double> angles = new ArrayList<>();
+        for (int i = 5; i < object.size()-5; i+=5) {
+            //image.setRGB(object.get(i).getX(), object.get(i).getY(), 16711680);
+            angles.add( getAngle(object.get(i), object.get(i-5), object.get(i+5)) );
+            if(angles.get(angles.size()-1) < 0.8 && angles.get(angles.size()-1) > -0.8){
+                //image.setRGB(object.get(i).getX(), object.get(i).getY(), 16711680);
+            }
+        }
+        //Show results
         Collections.sort(distances); 
-        System.out.println(distances.toString());
+        /*System.out.println(distances.toString());
         System.out.println(Collections.max(distances) + " " + Collections.min(distances));
+        System.out.println(angles.toString());*/
         /*
          * End of mon block 
          */
@@ -135,7 +149,8 @@ public class SelectInner extends Applet {
         for (int j = in.getX(), i = in.getY(); j < WIDTH && i < HEIGHT; j++, i++) {
             if (img.getRGB(j, i) != black) {
                 c = new Coordinate(j, i);
-                image.setRGB(j, i, 16724016);
+                //First pixel of inner contour
+                //image.setRGB(j, i, 16724016);
                 //System.out.println("Inner init: " + c.toString());
                 return c;
             }
@@ -207,6 +222,41 @@ public class SelectInner extends Applet {
                 (Math.sqrt( Math.pow(vector1.getX(),2)+Math.pow(vector1.getY(),2) )*
                 Math.sqrt( Math.pow(vector2.getX(),2)+Math.pow(vector2.getY(),2) ));
         return angle;
+    }
+    
+    public LSegment getLongestLSegment(ArrayList<Coordinate> coordinates){
+        //ArrayList<Integer> distances = new ArrayList<>();
+        ArrayList<LSegment> segments = new ArrayList<LSegment>();
+        ArrayList<Integer> distances = new ArrayList<>();
+        ArrayList<Coordinate> object = coordinates;
+        for (int i = 0; i < object.size(); i++) {
+            Coordinate max1 = object.get(i);
+            Coordinate max2 = object.get(i);
+            int distance = 0;
+            for (Coordinate obj : object) {
+                int dist = (int) Math.sqrt( (Math.pow(obj.getX() - max1.getX(), 2)
+                        + Math.pow(obj.getY() - max1.getY(), 2)));
+                if (dist > distance) {
+                    max2 = obj;
+                    distance = dist;
+                }
+            }
+            //image.setRGB(max1.getX(), max1.getY(), 16711680);
+            //image.setRGB(max2.getX(), max2.getY(), 16711680);
+            distances.add(distance);
+            segments.add(new LSegment(
+                    new Coordinate(max1.getX(), max1.getY()), 
+                    new Coordinate(max2.getX(), max2.getY())
+                    ));
+            
+        }
+        Collections.sort(segments);
+        /*Collections.sort(segments, new Comparator<LSegment>() {
+            public int compare(LSegment arg0, LSegment arg1) {
+                return arg0.compareTo(arg1);
+            }
+        });*/
+        return Collections.max(segments);
     }
 
     public void paint(Graphics gr) {

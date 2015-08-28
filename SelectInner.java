@@ -273,8 +273,9 @@ public class SelectInner extends Applet {
      */
     public  ArrayList<Coordinate> getHalf(LSegment line, ArrayList<Coordinate> contour, int side){
         ArrayList<Coordinate> result = new ArrayList<>();
-        if (side != -1 || side != 1)
-            System.err.println("Invalid side argument. Can be only -1 or 1");
+        if (side != -1 && side != 1){
+            System.err.println("Invalid side argument "+ side+ ". Can be only -1 or 1");
+        }
         for (Coordinate point: contour){
             if (getPosition(line, new Coordinate(point.getX(), point.getY())) == side){
                 result.add(point);

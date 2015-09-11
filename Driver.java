@@ -24,7 +24,11 @@ public class Driver extends Applet {
 
 	int white = (255 << 16) | (255 << 8) | 255;
 	int black = -16777216;
-
+	
+	public static void main(String[] args) {
+		Driver dr = new Driver();
+		dr.init();
+	}
 	public void init() {
 
 		long startTime = System.currentTimeMillis();
@@ -42,12 +46,25 @@ public class Driver extends Applet {
 		Coordinate intro = pimage.findInnerContour(pimage.findDot());
 		// Get all pixels of inner contour
 		ArrayList<Coordinate> list = pimage.selectContour(intro);
-
+		
+		
+		
 		LSegment segment = pimage.getLongestLSegment(list);
-
 		// show longest distance points
 		image.setRGB(segment.getA().getX(), segment.getA().getY(), 16711680);
 		image.setRGB(segment.getB().getX(), segment.getB().getY(), 16711680);
+		
+		
+		LSegment segment2 = new LSegment(new Coordinate(0,100), new Coordinate(100,0));
+		//image.setRGB(segment2.getA().getX(), segment2.getA().getY(), 16711680);
+		//image.setRGB(segment2.getB().getX(), segment2.getB().getY(), 16711680);
+		
+		Coordinate per = pimage.getPerpendicular(segment.getA(), 
+				segment.getB(), new Coordinate(150, 10));
+		image.setRGB(150, 10, 16711680);
+		System.out.println(per.getX() + " " + per.getY());
+		image.setRGB(per.getX(), per.getY(), 205);
+		
 		// show half of contour
 		for (Coordinate co : pimage.getHalf(segment, list, 1)) {
 			image.setRGB(co.getX(), co.getY(), 205);

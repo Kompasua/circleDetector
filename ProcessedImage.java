@@ -388,5 +388,13 @@ public class ProcessedImage {
         return object;
 
     }
+	
+	public Coordinate getPerpendicular(Coordinate a, Coordinate b, Coordinate m ){
+		double koef1 = (double)(b.getY() - a.getY()) / (double)(b.getX() - a.getX());
+		double koef2 = -Math.pow(koef1, -1);
+		int x = (int) ((koef1*a.getX()-a.getY() - koef2*m.getX()+m.getY())/(koef1-koef2));
+		int y = (int) ((koef1*(m.getX() - m.getY()/koef2 -a.getX())+a.getY())/(1- koef1/koef2));
+		return new Coordinate(x, y);
+	}
 
 }

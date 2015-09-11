@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.image.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -225,7 +226,7 @@ public class ProcessedImage {
 					new LSegment(new Coordinate(max1.getX(), max1.getY()), new Coordinate(max2.getX(), max2.getY())));
 
 		}
-		Collections.sort(segments);
+		Collections.sort(segments); // Should be removed
 		/*
 		 * Collections.sort(segments, new Comparator<LSegment>() { public int
 		 * compare(LSegment arg0, LSegment arg1) { return arg0.compareTo(arg1);
@@ -395,6 +396,16 @@ public class ProcessedImage {
 		int x = (int) ((koef1*a.getX()-a.getY() - koef2*m.getX()+m.getY())/(koef1-koef2));
 		int y = (int) ((koef1*(m.getX() - m.getY()/koef2 -a.getX())+a.getY())/(1- koef1/koef2));
 		return new Coordinate(x, y);
+	}
+	
+	public LSegment getLongestProjection(ArrayList<Coordinate> list, LSegment line){
+		ArrayList<LSegment> perpendiculars = new ArrayList<>();
+		for (Coordinate co : list) {
+			perpendiculars.add(new LSegment(getPerpendicular(line.getA(), line.getB(), co), co));
+		}
+		//Collections.sort(perpendiculars);
+		return new LSegment(Collections.max(perpendiculars).getA(), Collections.max(perpendiculars).getB());
+		
 	}
 
 }

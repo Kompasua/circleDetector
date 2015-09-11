@@ -58,6 +58,24 @@ public class ProcessedImage {
 		}
 		return imageBin;
 	}
+	/**
+	 * Convert image in grey scale
+	 * @return converted in grey scale image
+	 */
+	public BufferedImage toGreyScale() {
+        for (int i = 0; i < HEIGHT; i++) {
+            for (int j = 0; j < WIDTH; j++) {
+                Color c = new Color(image.getRGB(j, i));
+                int red = (int) (c.getRed() * 0.299);
+                int green = (int) (c.getGreen() * 0.587);
+                int blue = (int) (c.getBlue() * 0.114);
+                Color newColor = new Color(red + green + blue, red + green
+                        + blue, red + green + blue);
+                image.setRGB(j, i, newColor.getRGB());
+            }
+        }
+        return image;
+    }
 
 	/**
 	 * Find initial pixel - part of searching object on image
@@ -257,5 +275,118 @@ public class ProcessedImage {
 			return -1;
 		return 0;
 	}
+	
+	/**
+	 * This method select object on image by initial pixel of this object
+	 * @param c - initial pixel of object
+	 * @return array with all object pixels
+	 */
+	public ArrayList<Coordinate> selectObject(Coordinate c) {
+        ArrayList<Coordinate> object = new ArrayList<Coordinate>();
+        ArrayList<Coordinate> toCheck = new ArrayList<Coordinate>();
+        Coordinate temp;
+        toCheck.add(c);
+
+        while (!toCheck.isEmpty()) {
+            temp = toCheck.get(toCheck.size() - 1);
+            if ((temp.getX() != 0 && temp.getX() != WIDTH - 1)
+                    && (temp.getY() != 0 && temp.getY() != HEIGHT - 1)) {
+                image.setRGB(temp.getX(), temp.getY(), 13158600);
+                object.add(temp);
+                /* | | | |
+                 * | | | |
+                 * | |X| |
+                 */
+                if (image.getRGB(temp.getX(), temp.getY() - 1) == black
+                        && !toCheck.contains(new Coordinate(temp.getX(), temp
+                                .getY() - 1))
+                        && !object.contains(new Coordinate(temp.getX(), temp
+                                .getY() - 1))) {
+                    toCheck.add(new Coordinate(temp.getX(), temp.getY() - 1));
+                }
+                /* | |X| |
+                 * | | | |
+                 * | | | |
+                 */
+                if (image.getRGB(temp.getX(), temp.getY() + 1) == black
+                        && !toCheck.contains(new Coordinate(temp.getX(), temp
+                                .getY() + 1))
+                        && !object.contains(new Coordinate(temp.getX(), temp
+                                .getY() + 1))) {
+                    toCheck.add(new Coordinate(temp.getX(), temp.getY() + 1));
+                }
+                /* | | | |
+                 * | | | |
+                 * | | |X|
+                 */
+                if (image.getRGB(temp.getX() + 1, temp.getY() - 1) == black
+                        && !toCheck.contains(new Coordinate(temp.getX() + 1,
+                                temp.getY() - 1))
+                        && !object.contains(new Coordinate(temp.getX() + 1,
+                                temp.getY() - 1))) {
+                    toCheck.add(new Coordinate(temp.getX() + 1, temp.getY() - 1));
+                }
+                /* | | |X|
+                 * | | | |
+                 * | | | |
+                 */
+                if (image.getRGB(temp.getX() + 1, temp.getY() + 1) == black
+                        && !toCheck.contains(new Coordinate(temp.getX() + 1,
+                                temp.getY() + 1))
+                        && !object.contains(new Coordinate(temp.getX() + 1,
+                                temp.getY() + 1))) {
+                    toCheck.add(new Coordinate(temp.getX() + 1, temp.getY() + 1));
+                }
+                /* |X| | |
+                 * | | | |
+                 * | | | |
+                 */
+                if (image.getRGB(temp.getX() - 1, temp.getY() - 1) == black
+                        && !toCheck.contains(new Coordinate(temp.getX() - 1,
+                                temp.getY() - 1))
+                        && !object.contains(new Coordinate(temp.getX() - 1,
+                                temp.getY() - 1))) {
+                    toCheck.add(new Coordinate(temp.getX() - 1, temp.getY() - 1));
+                }
+                /* | | | |
+                 * | | | |
+                 * |X| | |
+                 */
+                if (image.getRGB(temp.getX() - 1, temp.getY() + 1) == black
+                        && !toCheck.contains(new Coordinate(temp.getX() - 1,
+                                temp.getY() + 1))
+                        && !object.contains(new Coordinate(temp.getX() - 1,
+                                temp.getY() + 1))) {
+                    toCheck.add(new Coordinate(temp.getX() - 1, temp.getY() + 1));
+                }
+                /* | | | |
+                 * |X| | |
+                 * | | | |
+                 */
+                if (image.getRGB(temp.getX() - 1, temp.getY()) == black
+                        && !toCheck.contains(new Coordinate(temp.getX() - 1,
+                                temp.getY()))
+                        && !object.contains(new Coordinate(temp.getX() - 1,
+                                temp.getY()))) {
+                    toCheck.add(new Coordinate(temp.getX() - 1, temp.getY()));
+                }
+                /* | | | |
+                 * | | |X|
+                 * | | | |
+                 */
+                if (image.getRGB(temp.getX() + 1, temp.getY()) == black
+                        && !toCheck.contains(new Coordinate(temp.getX() + 1,
+                                temp.getY()))
+                        && !object.contains(new Coordinate(temp.getX() + 1,
+                                temp.getY()))) {
+                    toCheck.add(new Coordinate(temp.getX() + 1, temp.getY()));
+                }
+            }
+            toCheck.remove(temp);
+        }
+
+        return object;
+
+    }
 
 }

@@ -16,7 +16,7 @@ public class Driver extends Applet {
 	static String FILENAME = "circle.jpg";
 	public BufferedImage image;
 	ProcessedImage pimage;
-
+	Image myImage; //draw line
 	Image img;
 	static int WIDTH;
 	static int HEIGHT;
@@ -48,28 +48,27 @@ public class Driver extends Applet {
 		ArrayList<Coordinate> list = pimage.selectContour(intro);
 		
 		
-		
+		// get first longest line
 		LSegment segment = pimage.getLongestLSegment(list);
-		// show longest distance points
-		image.setRGB(segment.getA().getX(), segment.getA().getY(), 16711680);
-		image.setRGB(segment.getB().getX(), segment.getB().getY(), 16711680);
+		// get half side of this line
+		ArrayList<Coordinate> listHalf = pimage.getHalf(segment, list, 1);
+		// get longest perpendicular
+		LSegment max = pimage.getLongestProjection(listHalf, segment);
+		// get half side of this line
+		ArrayList<Coordinate> listHalf2 = pimage.getHalf(max, listHalf, 1);
 		
+		LSegment segment2 = new LSegment(segment.getA(), max.getB());
+		image.setRGB(segment2.getA().getX(), segment2.getA().getY(), 16711680);
+		image.setRGB(segment2.getB().getX(), segment2.getB().getY(), 16711680);
 		
-		LSegment segment2 = new LSegment(new Coordinate(0,100), new Coordinate(100,0));
-		//image.setRGB(segment2.getA().getX(), segment2.getA().getY(), 16711680);
-		//image.setRGB(segment2.getB().getX(), segment2.getB().getY(), 16711680);
+		LSegment max2 = pimage.getLongestProjection(listHalf2, segment2);
+		// get half side of this line
+		ArrayList<Coordinate> listHalf3 = pimage.getHalf(max2, listHalf2, 1);
 		
-		Coordinate per = pimage.getPerpendicular(segment.getA(), 
-				segment.getB(), new Coordinate(150, 10));
-		image.setRGB(150, 10, 16711680);
-		System.out.println(per.getX() + " " + per.getY());
-		image.setRGB(per.getX(), per.getY(), 205);
-		
-		// show half of contour
-		for (Coordinate co : pimage.getHalf(segment, list, 1)) {
-			image.setRGB(co.getX(), co.getY(), 205);
+		for (Coordinate co : listHalf3) {
+			image.setRGB(co.getX(), co.getY(), 16711680);
 		}
-
+	
 		// Create and generate image
 		dataBuffInt = image.getRGB(0, 0, WIDTH, HEIGHT, null, 0, WIDTH);
 		img = createImage(new MemoryImageSource(WIDTH, HEIGHT, dataBuffInt, 0, WIDTH));
@@ -83,12 +82,11 @@ public class Driver extends Applet {
 
 		long stopTime = System.currentTimeMillis();
 		long elapsedTime = stopTime - startTime;
-		System.out.println(elapsedTime);
-		System.exit(0);
+		System.out.println("Elapsed time: "+elapsedTime);
+		//System.exit(0);
 	}
 
 	public void openImage() throws MalformedURLException, IOException {
-		System.out.println(FILENAME);
 		BufferedImage img = ImageIO.read(new File(FILENAME));
 		WIDTH = img.getWidth();
 		HEIGHT = img.getHeight();
@@ -97,6 +95,9 @@ public class Driver extends Applet {
 
 	public void paint(Graphics gr) {
 		gr.drawImage(img, 0, 0, this);
+		// Can be used for results demonstration
+		// gr.setColor(Color.RED);
+		// gr.drawLine(0, 0, 100, 100);
 	}
 
 }

@@ -390,11 +390,24 @@ public class ProcessedImage {
 
     }
 	
+	/**
+	 * This method calculate coordinate of projection from point onto line segment 
+	 * (builds a perpendicular). Formulas which are used in this method were 
+	 * derived from examples from website (russian): 
+	 * http://www.cleverstudents.ru/line_and_plane/projection_of_point_onto_line.html
+	 * @param a - first coordinate of line  segment
+	 * @param b - second coordinate of line segment
+	 * @param m - coordinate of point, from which we building a projection on line segment
+	 * @return coordinate of projection on line segment from point m
+	 */
 	public Coordinate getPerpendicular(Coordinate a, Coordinate b, Coordinate m ){
-		double koef1 = (double)(b.getY() - a.getY()) / (double)(b.getX() - a.getX());
-		double koef2 = -Math.pow(koef1, -1);
-		int x = (int) ((koef1*a.getX()-a.getY() - koef2*m.getX()+m.getY())/(koef1-koef2));
-		int y = (int) ((koef1*(m.getX() - m.getY()/koef2 -a.getX())+a.getY())/(1- koef1/koef2));
+		// Angular coefficient of line segment
+		double coefLS = (double)(b.getY() - a.getY()) / (double)(b.getX() - a.getX());
+		// Angular coefficient of perpendicular to line segment
+		double coefP = -Math.pow(coefLS, -1);
+		// Calculate coordinates of projection on line segment
+		int x = (int) ((coefLS*a.getX()-a.getY() - coefP*m.getX()+m.getY())/(coefLS-coefP));
+		int y = (int) ((coefLS*(m.getX() - m.getY()/coefP -a.getX())+a.getY())/(1- coefLS/coefP));
 		return new Coordinate(x, y);
 	}
 	

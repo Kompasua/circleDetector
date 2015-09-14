@@ -58,16 +58,18 @@ public class Driver extends Applet {
 		ArrayList<Coordinate> listLHalf = pimage.getHalf(segment, list, -1);
 		
 		ArrayList<LSegment> linesL = new ArrayList<>();
-		linesL = pimage.approximate(listRHalf, segment);
+		linesL.addAll(pimage.approximate(listLHalf, segment, -1));
 		//pimage.clear();
+		System.out.println("size "+linesL.size());
+		
 		ArrayList<LSegment> linesR = new ArrayList<>();
-		linesR = pimage.approximate(listLHalf, segment);
+		linesR.addAll(pimage.approximate(listRHalf, segment, 1));
 
 		Graphics2D g2d = image.createGraphics();
 
 		// Draw on the buffered image
 		g2d.setColor(Color.red);
-
+		
 		for (LSegment line : linesL) {
 			g2d.setColor(Color.RED);
 			g2d.drawLine(line.getA().getX(), line.getA().getY(), line.getB().getX(), line.getB().getY());

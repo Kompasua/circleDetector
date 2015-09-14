@@ -15,11 +15,15 @@ public class ProcessedImage {
 	// White and black integer values
 	int white = (255 << 16) | (255 << 8) | 255;
 	int black = -16777216;
+	
+	public ArrayList<LSegment> lines = new ArrayList<>();
+	boolean flag = true;
 
 	public ProcessedImage(int width, int height, BufferedImage image) {
 		this.WIDTH = width;
 		this.HEIGHT = height;
 		this.image = image;
+		//lines.add(null); // pay attention! not good solution
 	}
 
 	public int getWIDTH() {
@@ -419,6 +423,45 @@ public class ProcessedImage {
 		//Collections.sort(perpendiculars);
 		return new LSegment(Collections.max(perpendiculars).getA(), Collections.max(perpendiculars).getB());
 		
+	}
+	
+	public ArrayList<LSegment> approximate(ArrayList<Coordinate> list, LSegment line) {
+		LSegment maxR = this.getLongestProjection(list, line);
+		if (lines.contains(line))
+			lines.remove(line);
+		lines.add(new LSegment(maxR.getB(), line.getA()));
+		lines.add(new LSegment(maxR.getB(), line.getB()));
+		ArrayList<Coordinate> listR = getHalf(maxR, list, 1);
+		ArrayList<Coordinate> listL = getHalf(maxR, list, -1);
+		
+		for (Coordinate co : listR) {
+			//image.setRGB(co.getX(), co.getY(), 16711680);
+		}
+		for (Coordinate co : listL) {
+			//image.setRGB(co.getX(), co.getY(), 205);
+		}
+		image.setRGB(lines.get(1).getA().getX(), lines.get(1).getA().getY(), 16711680);
+		image.setRGB(lines.get(1).getB().getX(), lines.get(1).getB().getY(), 205);
+		
+		System.out.println(maxR.getLength());
+		if (maxR.getLength() > 15000){
+			System.out.println("true");
+			approximate(listR, new LSegment(maxR.getB(), line.getA()));
+			approximate(listL, new LSegment(maxR.getB(), line.getB()));
+		}
+		
+		if (flag == true){
+			flag = false;
+			System.out.println("true");
+			//approximate(listR, new LSegment(maxR.getB(), line.getA()));
+			//approximate(listL, new LSegment(maxR.getB(), line.getB()));
+		}
+		
+		return lines;
+	}
+	
+	public void clear(){
+		lines.clear();
 	}
 
 }

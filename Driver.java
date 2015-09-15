@@ -59,7 +59,7 @@ public class Driver extends Applet {
 		
 		ArrayList<LSegment> linesL = new ArrayList<>();
 		linesL.addAll(pimage.approximate(listLHalf, segment, -1));
-		//pimage.clear();
+		pimage.clear();
 		System.out.println("size "+linesL.size());
 		
 		ArrayList<LSegment> linesR = new ArrayList<>();
@@ -70,6 +70,7 @@ public class Driver extends Applet {
 		// Draw on the buffered image
 		g2d.setColor(Color.red);
 		
+	
 		for (LSegment line : linesL) {
 			g2d.setColor(Color.RED);
 			g2d.drawLine(line.getA().getX(), line.getA().getY(), line.getB().getX(), line.getB().getY());
@@ -79,6 +80,21 @@ public class Driver extends Applet {
 			g2d.setColor(Color.BLUE);
 			g2d.drawLine(line.getA().getX(), line.getA().getY(), line.getB().getX(), line.getB().getY());
 		}
+		
+		//
+		int index = 1;
+		g2d.setColor(Color.RED);
+		//g2d.drawLine(linesR.get(index).getA().getX(), linesR.get(index).getA().getY(),linesR.get(index).getB().getX(), linesR.get(index).getB().getY());
+		
+		//ArrayList<Coordinate> listtestR = pimage.getHalf(linesR.get(index), list, -1);
+		//for (Coordinate co : listtestR) { 
+			//image.setRGB(co.getX(), co.getY(), Color.GREEN.getRGB()); 
+		//}
+		//LSegment maxProj = pimage.getLongestProjection(listtestR, linesR.get(index));
+		//image.setRGB(maxProj.getA().getX(), maxProj.getA().getY(), Color.ORANGE.getRGB()); 
+		//image.setRGB(maxProj.getB().getX(), maxProj.getB().getY(), Color.ORANGE.getRGB());
+		//
+		
 		g2d.dispose();
 
 		// get longest perpendicular

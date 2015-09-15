@@ -425,37 +425,38 @@ public class ProcessedImage {
 		
 	}
 	
+	int index = 5;
 	public ArrayList<LSegment> approximate(ArrayList<Coordinate> list, LSegment line, int side) {
 			
-		LSegment maxR = this.getLongestProjection(list, line);
-		if (lines.contains(line))
-			lines.remove(line);
-		lines.add(new LSegment(maxR.getB(), line.getA()));
-		lines.add(new LSegment(maxR.getB(), line.getB()));
-		ArrayList<Coordinate> listR = getHalf(maxR, list, side);
-		ArrayList<Coordinate> listL = getHalf(maxR, list, side*-1);
+		LSegment maxProj = this.getLongestProjection(list, line);
+		//if (lines.contains(line))
+		lines.remove(line);
+		lines.add(new LSegment(maxProj.getB(), line.getA()));
+		lines.add(new LSegment(maxProj.getB(), line.getB()));
+		ArrayList<Coordinate> listR = getHalf(maxProj, list, side);
+		ArrayList<Coordinate> listL = getHalf(maxProj, list, side*-1);
 		
 		for (Coordinate co : listR) {
 			//image.setRGB(co.getX(), co.getY(), 205);
 		}
-		for (Coordinate co : listL) {
+		//for (Coordinate co : listL) {
 			//image.setRGB(co.getX(), co.getY(), 205);
-		}
+		//}
 		
 		
-		LSegment line1 = new LSegment(maxR.getB(), line.getA());
-		LSegment line2 = new LSegment(maxR.getB(), line.getB());
+		LSegment line1 = new LSegment(maxProj.getB(), line.getA());
+		LSegment line2 = new LSegment(maxProj.getB(), line.getB());
 		
+		//if (index !=0){
+			index--;
+			if (maxProj.getLength() > 10 && listR.size()>0){
+				approximate(listR, line1, side*-1 );
+			}
+			if (maxProj.getLength() > 10 && listL.size()>0){
+				approximate(listL, line2, side  );
+			}
+		//}
 		
-		image.setRGB( maxR.getB().getX(), maxR.getB().getY(), Color.GREEN.getRGB());
-		image.setRGB( line.getA().getX(),  line.getA().getY(), Color.GREEN.getRGB());
-		
-		System.out.println(maxR.getLength());
-		if (maxR.getLength() > 45){
-			System.out.println("true");
-			approximate(listR, line1, side );
-			approximate(listL, line2, side  );
-		}
 		
 		/*if (flag == true){
 			flag = false;
@@ -463,7 +464,7 @@ public class ProcessedImage {
 			approximate(listR, new LSegment(maxR.getB(), line.getA()), side );
 			approximate(listL, new LSegment(maxR.getB(), line.getB()), side );
 		}*/
-		
+		System.out.println(lines.size());
 		return lines;
 	}
 	

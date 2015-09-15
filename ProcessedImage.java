@@ -449,10 +449,10 @@ public class ProcessedImage {
 		
 		//if (index !=0){
 			index--;
-			if (maxProj.getLength() > 10 && listR.size()>0){
+			if (maxProj.getLength() > 20 && listR.size()>0){
 				approximate(listR, line1, side*-1 );
 			}
-			if (maxProj.getLength() > 10 && listL.size()>0){
+			if (maxProj.getLength() > 20 && listL.size()>0){
 				approximate(listL, line2, side  );
 			}
 		//}
@@ -464,8 +464,19 @@ public class ProcessedImage {
 			approximate(listR, new LSegment(maxR.getB(), line.getA()), side );
 			approximate(listL, new LSegment(maxR.getB(), line.getB()), side );
 		}*/
-		System.out.println(lines.size());
 		return lines;
+	}
+	
+	public double getAngleLine(LSegment line1, LSegment line2) {
+		// Create two vectors from this coordinates to calculate it with formula
+		Coordinate vector1 = new Coordinate(line1.getB().getX() - line1.getA().getX(), 
+											line1.getB().getY() - line1.getA().getY());
+		Coordinate vector2 = new Coordinate(line2.getB().getX() - line2.getA().getX(), 
+											line2.getB().getY() - line2.getA().getY());
+		double angle = (vector1.getX() * vector2.getX() + vector1.getY() * vector2.getY())
+				/ (Math.sqrt(Math.pow(vector1.getX(), 2) + Math.pow(vector1.getY(), 2))
+						* Math.sqrt(Math.pow(vector2.getX(), 2) + Math.pow(vector2.getY(), 2)));
+		return angle;
 	}
 	
 	public void clear(){

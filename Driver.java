@@ -11,11 +11,12 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import javax.imageio.ImageIO;
+import javax.swing.plaf.SliderUI;
 
 public class Driver extends Applet {
 
 	// Location of image
-	static String FILENAME = "circle.jpg";
+	static String FILENAME = "test_circle.jpg";
 	public BufferedImage image;
 	ProcessedImage pimage;
 	Image myImage; // draw line
@@ -56,12 +57,11 @@ public class Driver extends Applet {
 		// get half side of this line
 		ArrayList<Coordinate> listRHalf = pimage.getHalf(segment, list, 1);
 		ArrayList<Coordinate> listLHalf = pimage.getHalf(segment, list, -1);
-		
+
 		ArrayList<LSegment> linesL = new ArrayList<>();
 		linesL.addAll(pimage.approximate(listLHalf, segment, -1));
 		pimage.clear();
-		System.out.println("size "+linesL.size());
-		
+
 		ArrayList<LSegment> linesR = new ArrayList<>();
 		linesR.addAll(pimage.approximate(listRHalf, segment, 1));
 
@@ -69,55 +69,60 @@ public class Driver extends Applet {
 
 		// Draw on the buffered image
 		g2d.setColor(Color.red);
-		
-	
-		for (LSegment line : linesL) {
+
+		ArrayList<LSegment> segments = new ArrayList<>();
+
+		segments.addAll(linesR);
+		segments.addAll(linesL);
+		ArrayList<LSegment> segmentsSorted = new ArrayList<>();
+		segmentsSorted.addAll(segment.sortLines(segments));
+		// segmentsSorted.add(segments.get(segments.size()-1));
+		System.out.println(segments);
+		segmentsSorted.remove(0);
+		System.out.println(segmentsSorted);
+		ArrayList<Color> colors = new ArrayList<>();
+
+		colors.add(Color.GREEN);
+		colors.add(Color.BLUE);
+		colors.add(Color.YELLOW);
+		colors.add(Color.CYAN);
+		colors.add(Color.DARK_GRAY);
+		colors.add(Color.PINK);
+		colors.add(Color.MAGENTA);
+		colors.add(Color.GRAY);
+		colors.add(Color.LIGHT_GRAY);
+		colors.add(Color.ORANGE);
+		colors.add(Color.RED);
+		int i = 0;
+		for (LSegment line : segmentsSorted) {
 			g2d.setColor(Color.RED);
+			//g2d.setColor(colors.get(i));
 			g2d.drawLine(line.getA().getX(), line.getA().getY(), line.getB().getX(), line.getB().getY());
+			i++;
+		}
+
+		ArrayList<Double> angles = new ArrayList<>();
+		
+		for (int j = 0; j < segmentsSorted.size() - 1; j++) {
+			int num = j;
+			LSegment line1 = segmentsSorted.get(num);
+			LSegment line2 = segmentsSorted.get(num + 1);
+			angles.add(Math.toDegrees(Math.acos(pimage.getAngleLine(line1, line2))));
 		}
 		
-		for (LSegment line : linesR) {
-			g2d.setColor(Color.BLUE);
-			g2d.drawLine(line.getA().getX(), line.getA().getY(), line.getB().getX(), line.getB().getY());
+		angles.add(Math.toDegrees(Math.acos(pimage.getAngleLine(segmentsSorted.get(0), 
+				segmentsSorted.get(segmentsSorted.size() - 1)))));
+
+		for (double num : angles) {
+			//System.out.println(num);
 		}
-		
-		//
-		int index = 1;
-		g2d.setColor(Color.RED);
-		//g2d.drawLine(linesR.get(index).getA().getX(), linesR.get(index).getA().getY(),linesR.get(index).getB().getX(), linesR.get(index).getB().getY());
-		
-		//ArrayList<Coordinate> listtestR = pimage.getHalf(linesR.get(index), list, -1);
-		//for (Coordinate co : listtestR) { 
-			//image.setRGB(co.getX(), co.getY(), Color.GREEN.getRGB()); 
-		//}
-		//LSegment maxProj = pimage.getLongestProjection(listtestR, linesR.get(index));
-		//image.setRGB(maxProj.getA().getX(), maxProj.getA().getY(), Color.ORANGE.getRGB()); 
-		//image.setRGB(maxProj.getB().getX(), maxProj.getB().getY(), Color.ORANGE.getRGB());
-		//
-		
+		if (Collections.max(angles) - Collections.min(angles) < 10){
+			System.out.println("Yes");
+		}else{
+			System.out.println("No!");
+		}
+
 		g2d.dispose();
-
-		// get longest perpendicular
-		// LSegment max = pimage.getLongestProjection(listHalf, segment);
-		// get half side of this line
-
-		// lines = pimage.approximate(list, segment);
-
-		/*
-		 * ArrayList<Coordinate> listHalf2 = pimage.getHalf(max, listHalf, 1);
-		 * 
-		 * LSegment segment2 = new LSegment(segment.getA(), max.getB());
-		 * image.setRGB(segment2.getA().getX(), segment2.getA().getY(),
-		 * 16711680); image.setRGB(segment2.getB().getX(),
-		 * segment2.getB().getY(), 16711680);
-		 * 
-		 * LSegment max2 = pimage.getLongestProjection(listHalf2, segment2); //
-		 * get half side of this line ArrayList<Coordinate> listHalf3 =
-		 * pimage.getHalf(max2, listHalf2, 1);
-		 * 
-		 * for (Coordinate co : listHalf3) { image.setRGB(co.getX(), co.getY(),
-		 * 16711680); }
-		 */
 
 		// Create and generate image
 		dataBuffInt = image.getRGB(0, 0, WIDTH, HEIGHT, null, 0, WIDTH);

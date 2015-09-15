@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * This class creates object line segment. This line segment has start and end
  * coordinates, ant its length.
@@ -107,6 +109,48 @@ public class LSegment implements Comparable {
 			return 1;
 		}
 		return 0;
+	}
+	
+	public ArrayList<LSegment> sortLines(ArrayList<LSegment> lines){
+		ArrayList<LSegment> segmentsSorted = new ArrayList<>();
+		ArrayList<LSegment> curLines = new ArrayList<>();
+		curLines.addAll(lines);
+		segmentsSorted.add(curLines.get(0));
+		//for (int i = 0; i <= curLines.size(); i++) {
+		int i = 0;
+		while(curLines.size() > 0){
+			//System.out.println("Iteration "+i);
+			//System.out.println("Lines size "+ curLines.size());
+			//System.out.println(curLines);
+			//System.out.println(segmentsSorted);
+			LSegment temp = getNextLine(curLines, segmentsSorted.get(segmentsSorted.size()-1));
+			curLines.remove(temp);
+			segmentsSorted.add(temp);
+			i++;
+		}
+		//segmentsSorted.add(curLines.get(curLines.size()-1));
+		//curLines.remove(0);
+		//System.out.println("Lines size "+ curLines.size());
+		//System.out.println(curLines);
+		//System.out.println(segmentsSorted);
+		return segmentsSorted;
+	}
+	
+	public LSegment getNextLine(ArrayList<LSegment> lines, LSegment initLine){
+		//System.out.println("Init "+initLine.toString());
+		//System.out.println(lines);
+		for (LSegment line : lines) {
+			if ( (initLine.getA().equals(line.getA()) || initLine.getA().equals(line.getB()))
+					&& initLine.equals(line)==false){
+				return line;
+			}
+			if ( (initLine.getB().equals(line.getA()) || initLine.getB().equals(line.getB()))
+					&& initLine.equals(line)==false){
+				return line;
+			}
+		}
+		System.err.println("NULL!");
+		return null;
 	}
 
 }

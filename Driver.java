@@ -86,35 +86,57 @@ public class Driver extends Applet {
 		colors.add(Color.BLUE);
 		colors.add(Color.YELLOW);
 		colors.add(Color.CYAN);
+		colors.add(Color.ORANGE);
+		colors.add(Color.RED);
 		colors.add(Color.DARK_GRAY);
 		colors.add(Color.PINK);
 		colors.add(Color.MAGENTA);
 		colors.add(Color.GRAY);
 		colors.add(Color.LIGHT_GRAY);
-		colors.add(Color.ORANGE);
-		colors.add(Color.RED);
+		
+		for (int j = 0; j < segmentsSorted.size()-1; j++) {
+			if (!segmentsSorted.get(j).getA().equals(segmentsSorted.get(j+1).getB())) {
+				segmentsSorted.set(j+1, new LSegment(
+						segmentsSorted.get(j+1).getB(), segmentsSorted.get(j+1).getA()));
+			}else
+			if (!segmentsSorted.get(j).getB().equals(segmentsSorted.get(j+1).getA())) {
+				segmentsSorted.set(j+1, new LSegment(
+						segmentsSorted.get(j+1).getA(), segmentsSorted.get(j+1).getB()));
+			}
+		}
+		
+		for (int j = 0; j < segmentsSorted.size(); j++) {
+			if (segmentsSorted.get(j).getLength() < 20) {
+				segmentsSorted.remove(j);
+				j--;
+			}
+		}
+				
 		int i = 0;
 		for (LSegment line : segmentsSorted) {
+			System.out.println(line);
 			g2d.setColor(Color.RED);
-			//g2d.setColor(colors.get(i));
+			g2d.setColor(colors.get(i));
 			g2d.drawLine(line.getA().getX(), line.getA().getY(), line.getB().getX(), line.getB().getY());
 			i++;
+			
 		}
 
 		ArrayList<Double> angles = new ArrayList<>();
-		
+		//int j = 0;
 		for (int j = 0; j < segmentsSorted.size() - 1; j++) {
 			int num = j;
 			LSegment line1 = segmentsSorted.get(num);
 			LSegment line2 = segmentsSorted.get(num + 1);
-			angles.add(Math.toDegrees(Math.acos(pimage.getAngleLine(line1, line2))));
+			// Jump over too little line segments
+			angles.add(180-Math.toDegrees(Math.acos(pimage.getAngleLine(line1, line2))));
 		}
 		
-		angles.add(Math.toDegrees(Math.acos(pimage.getAngleLine(segmentsSorted.get(0), 
+		angles.add(180-Math.toDegrees(Math.acos(pimage.getAngleLine(segmentsSorted.get(0), 
 				segmentsSorted.get(segmentsSorted.size() - 1)))));
 
 		for (double num : angles) {
-			//System.out.println(num);
+			System.out.println(num);
 		}
 		if (Collections.max(angles) - Collections.min(angles) < 10){
 			System.out.println("Yes");

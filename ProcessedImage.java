@@ -112,7 +112,7 @@ public class ProcessedImage {
 	public Coordinate findInnerContour(Coordinate in) {
 		Coordinate c = new Coordinate(-1, -1);
 		// Takes initial pixel coordinates and goes right-bottom direction
-		for (int j = in.getX(), i = in.getY(); j < WIDTH && i < HEIGHT; j++, i++) {
+		for (int j = in.getX(), i = in.getY(); j < WIDTH && i < HEIGHT;  i++) {
 			if (image.getRGB(j, i) != black) {
 				c = new Coordinate(j, i);
 				return c;
@@ -446,24 +446,13 @@ public class ProcessedImage {
 		
 		LSegment line1 = new LSegment(maxProj.getB(), line.getA());
 		LSegment line2 = new LSegment(maxProj.getB(), line.getB());
-		
-		//if (index !=0){
-			index--;
-			if (maxProj.getLength() > 20 && listR.size()>0){
-				approximate(listR, line1, side*-1 );
-			}
-			if (maxProj.getLength() > 20 && listL.size()>0){
-				approximate(listL, line2, side  );
-			}
-		//}
-		
-		
-		/*if (flag == true){
-			flag = false;
-			System.out.println("true");
-			approximate(listR, new LSegment(maxR.getB(), line.getA()), side );
-			approximate(listL, new LSegment(maxR.getB(), line.getB()), side );
-		}*/
+		index--;
+		if (maxProj.getLength() > 100 && listR.size() > 0) {
+			approximate(listR, line1, side * -1);
+		}
+		if (maxProj.getLength() > 100 && listL.size() > 0) {
+			approximate(listL, line2, side);
+		}
 		return lines;
 	}
 	

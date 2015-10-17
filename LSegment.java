@@ -116,29 +116,15 @@ public class LSegment implements Comparable {
 		ArrayList<LSegment> curLines = new ArrayList<>();
 		curLines.addAll(lines);
 		segmentsSorted.add(curLines.get(0));
-		//for (int i = 0; i <= curLines.size(); i++) {
-		int i = 0;
 		while(curLines.size() > 0){
-			//System.out.println("Iteration "+i);
-			//System.out.println("Lines size "+ curLines.size());
-			//System.out.println(curLines);
-			//System.out.println(segmentsSorted);
 			LSegment temp = getNextLine(curLines, segmentsSorted.get(segmentsSorted.size()-1));
 			curLines.remove(temp);
 			segmentsSorted.add(temp);
-			i++;
 		}
-		//segmentsSorted.add(curLines.get(curLines.size()-1));
-		//curLines.remove(0);
-		//System.out.println("Lines size "+ curLines.size());
-		//System.out.println(curLines);
-		//System.out.println(segmentsSorted);
 		return segmentsSorted;
 	}
 	
 	public LSegment getNextLine(ArrayList<LSegment> lines, LSegment initLine){
-		//System.out.println("Init "+initLine.toString());
-		//System.out.println(lines);
 		for (LSegment line : lines) {
 			if ( (initLine.getA().equals(line.getA()) || initLine.getA().equals(line.getB()))
 					&& initLine.equals(line)==false){

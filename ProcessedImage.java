@@ -447,10 +447,10 @@ public class ProcessedImage {
 		LSegment line1 = new LSegment(maxProj.getB(), line.getA());
 		LSegment line2 = new LSegment(maxProj.getB(), line.getB());
 		index--;
-		if (maxProj.getLength() > 100 && listR.size() > 0) {
+		if (maxProj.getLength() > 10 && listR.size() > 0) {
 			approximate(listR, line1, side * -1);
 		}
-		if (maxProj.getLength() > 100 && listL.size() > 0) {
+		if (maxProj.getLength() > 10 && listL.size() > 0) {
 			approximate(listL, line2, side);
 		}
 		return lines;

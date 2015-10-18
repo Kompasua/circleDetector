@@ -1,6 +1,5 @@
 import java.awt.*;
 import java.awt.image.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -15,7 +14,7 @@ public class ProcessedImage {
 	// White and black integer values
 	int white = (255 << 16) | (255 << 8) | 255;
 	int black = -16777216;
-	
+
 	public ArrayList<LSegment> lines = new ArrayList<>();
 	boolean flag = true;
 
@@ -23,7 +22,7 @@ public class ProcessedImage {
 		this.WIDTH = width;
 		this.HEIGHT = height;
 		this.image = image;
-		//lines.add(null); // pay attention! not good solution
+		// lines.add(null); // pay attention! not good solution
 	}
 
 	public int getWIDTH() {
@@ -41,8 +40,7 @@ public class ProcessedImage {
 	/**
 	 * Convert image in binary.
 	 * 
-	 * @param level
-	 *            - contrast level
+	 * @param level - contrast level
 	 * @return image converted in binary
 	 */
 	public BufferedImage convertInBinary(int level) {
@@ -63,24 +61,25 @@ public class ProcessedImage {
 		}
 		return imageBin;
 	}
+
 	/**
 	 * Convert image in grey scale
+	 * 
 	 * @return converted in grey scale image
 	 */
 	public BufferedImage toGreyScale() {
-        for (int i = 0; i < HEIGHT; i++) {
-            for (int j = 0; j < WIDTH; j++) {
-                Color c = new Color(image.getRGB(j, i));
-                int red = (int) (c.getRed() * 0.299);
-                int green = (int) (c.getGreen() * 0.587);
-                int blue = (int) (c.getBlue() * 0.114);
-                Color newColor = new Color(red + green + blue, red + green
-                        + blue, red + green + blue);
-                image.setRGB(j, i, newColor.getRGB());
-            }
-        }
-        return image;
-    }
+		for (int i = 0; i < HEIGHT; i++) {
+			for (int j = 0; j < WIDTH; j++) {
+				Color c = new Color(image.getRGB(j, i));
+				int red = (int) (c.getRed() * 0.299);
+				int green = (int) (c.getGreen() * 0.587);
+				int blue = (int) (c.getBlue() * 0.114);
+				Color newColor = new Color(red + green + blue, red + green + blue, red + green + blue);
+				image.setRGB(j, i, newColor.getRGB());
+			}
+		}
+		return image;
+	}
 
 	/**
 	 * Find initial pixel - part of searching object on image
@@ -104,15 +103,14 @@ public class ProcessedImage {
 	/**
 	 * This method is searching for the beginning of inner contour of object.
 	 * 
-	 * @param in
-	 *            - initial pixel of object
+	 * @param in - initial pixel of object
 	 * @return initial pixel NEAR the inner contour. So it is pixel from white
 	 *         area.
 	 */
 	public Coordinate findInnerContour(Coordinate in) {
 		Coordinate c = new Coordinate(-1, -1);
 		// Takes initial pixel coordinates and goes right-bottom direction
-		for (int j = in.getX(), i = in.getY(); j < WIDTH && i < HEIGHT;  i++) {
+		for (int j = in.getX(), i = in.getY(); j < WIDTH && i < HEIGHT; i++) {
 			if (image.getRGB(j, i) != black) {
 				c = new Coordinate(j, i);
 				return c;
@@ -123,8 +121,9 @@ public class ProcessedImage {
 	}
 
 	/**
-	 * This method select inner contour of object. It uses bug contour selection 
+	 * This method select inner contour of object. It uses bug contour selection
 	 * algorithm.
+	 * 
 	 * @param init - initial pixel near inner contour
 	 * @return array with contour pixels
 	 */
@@ -184,7 +183,8 @@ public class ProcessedImage {
 	}
 
 	/**
-	 * This method calculate the angle between two crossing line parts. 
+	 * This method calculate the angle between two crossing line parts.
+	 * 
 	 * @param a cross coordinate of two lines
 	 * @param b coordinate of the first line
 	 * @param c coordinate of the second line
@@ -196,14 +196,16 @@ public class ProcessedImage {
 		Coordinate vector2 = new Coordinate(c.getX() - a.getX(), c.getY() - a.getY());
 		double angle = (vector1.getX() * vector2.getX() + vector1.getY() * vector2.getY())
 				/ (Math.sqrt(Math.pow(vector1.getX(), 2) + Math.pow(vector1.getY(), 2))
-						* Math.sqrt(Math.pow(vector2.getX(), 2) + Math.pow(vector2.getY(), 2)));
+				* Math.sqrt(Math.pow(vector2.getX(), 2) + Math.pow(vector2.getY(), 2)));
 		return angle;
 	}
+
 	/**
-	 * Takes coordinates array and searching for the two points
-	 * that have the longest distance between each other.
-	 * @param coordinates 
-	 * @return longest line segment 
+	 * Takes coordinates array and searching for the two points that have the
+	 * longest distance between each other.
+	 * 
+	 * @param coordinates
+	 * @return longest line segment
 	 */
 	public LSegment getLongestLSegment(ArrayList<Coordinate> coordinates) {
 		// Array with line segments created between different coordinates
@@ -211,7 +213,7 @@ public class ProcessedImage {
 		// Array of distances
 		ArrayList<Integer> distances = new ArrayList<>();
 		ArrayList<Coordinate> object = coordinates;
-		// Take coordinate and calculate and fin another coordinate 
+		// Take coordinate and calculate and fin another coordinate
 		// with the longest distance
 		for (int i = 0; i < object.size(); i++) {
 			Coordinate max1 = object.get(i);
@@ -230,23 +232,14 @@ public class ProcessedImage {
 					new LSegment(new Coordinate(max1.getX(), max1.getY()), new Coordinate(max2.getX(), max2.getY())));
 
 		}
-		Collections.sort(segments); // Should be removed
-		/*
-		 * Collections.sort(segments, new Comparator<LSegment>() { public int
-		 * compare(LSegment arg0, LSegment arg1) { return arg0.compareTo(arg1);
-		 * } });
-		 */
 		return Collections.max(segments);
 	}
 
 	/**
 	 * 
-	 * @param line
-	 *            - sides separator
-	 * @param contour
-	 *            of object
-	 * @param side:
-	 *            -1 if on bottom, 1 if on top side
+	 * @param line - sides separator
+	 * @param contour of object
+	 * @param side: -1 if on bottom, 1 if on top side
 	 * @return array of contour points from given side
 	 */
 	public ArrayList<Coordinate> getHalf(LSegment line, ArrayList<Coordinate> contour, int side) {
@@ -260,13 +253,11 @@ public class ProcessedImage {
 			}
 		}
 		return result;
-
 	}
 
 	/**
 	 * @param line
-	 * @param c
-	 *            - point coordinate
+	 * @param c - point coordinate
 	 * @return 1 if on top, -1 if on bottom, 0 if on line
 	 */
 	public int getPosition(LSegment line, Coordinate c) {
@@ -280,170 +271,148 @@ public class ProcessedImage {
 			return -1;
 		return 0;
 	}
-	
+
 	/**
 	 * This method select object on image by initial pixel of this object
+	 * 
 	 * @param c - initial pixel of object
 	 * @return array with all object pixels
 	 */
 	public ArrayList<Coordinate> selectObject(Coordinate c) {
-        ArrayList<Coordinate> object = new ArrayList<Coordinate>();
-        ArrayList<Coordinate> toCheck = new ArrayList<Coordinate>();
-        Coordinate temp;
-        toCheck.add(c);
+		ArrayList<Coordinate> object = new ArrayList<Coordinate>();
+		ArrayList<Coordinate> toCheck = new ArrayList<Coordinate>();
+		Coordinate temp;
+		toCheck.add(c);
 
-        while (!toCheck.isEmpty()) {
-            temp = toCheck.get(toCheck.size() - 1);
-            if ((temp.getX() != 0 && temp.getX() != WIDTH - 1)
-                    && (temp.getY() != 0 && temp.getY() != HEIGHT - 1)) {
-                image.setRGB(temp.getX(), temp.getY(), 13158600);
-                object.add(temp);
+		while (!toCheck.isEmpty()) {
+			temp = toCheck.get(toCheck.size() - 1);
+			if ((temp.getX() != 0 && temp.getX() != WIDTH - 1) && (temp.getY() != 0 && temp.getY() != HEIGHT - 1)) {
+				image.setRGB(temp.getX(), temp.getY(), 13158600);
+				object.add(temp);
                 /* | | | |
                  * | | | |
                  * | |X| |
                  */
-                if (image.getRGB(temp.getX(), temp.getY() - 1) == black
-                        && !toCheck.contains(new Coordinate(temp.getX(), temp
-                                .getY() - 1))
-                        && !object.contains(new Coordinate(temp.getX(), temp
-                                .getY() - 1))) {
-                    toCheck.add(new Coordinate(temp.getX(), temp.getY() - 1));
-                }
+				if (image.getRGB(temp.getX(), temp.getY() - 1) == black
+						&& !toCheck.contains(new Coordinate(temp.getX(), temp.getY() - 1))
+						&& !object.contains(new Coordinate(temp.getX(), temp.getY() - 1))) {
+					toCheck.add(new Coordinate(temp.getX(), temp.getY() - 1));
+				}
                 /* | |X| |
                  * | | | |
                  * | | | |
                  */
-                if (image.getRGB(temp.getX(), temp.getY() + 1) == black
-                        && !toCheck.contains(new Coordinate(temp.getX(), temp
-                                .getY() + 1))
-                        && !object.contains(new Coordinate(temp.getX(), temp
-                                .getY() + 1))) {
-                    toCheck.add(new Coordinate(temp.getX(), temp.getY() + 1));
-                }
+				if (image.getRGB(temp.getX(), temp.getY() + 1) == black
+						&& !toCheck.contains(new Coordinate(temp.getX(), temp.getY() + 1))
+						&& !object.contains(new Coordinate(temp.getX(), temp.getY() + 1))) {
+					toCheck.add(new Coordinate(temp.getX(), temp.getY() + 1));
+				}
                 /* | | | |
                  * | | | |
                  * | | |X|
                  */
-                if (image.getRGB(temp.getX() + 1, temp.getY() - 1) == black
-                        && !toCheck.contains(new Coordinate(temp.getX() + 1,
-                                temp.getY() - 1))
-                        && !object.contains(new Coordinate(temp.getX() + 1,
-                                temp.getY() - 1))) {
-                    toCheck.add(new Coordinate(temp.getX() + 1, temp.getY() - 1));
-                }
+				if (image.getRGB(temp.getX() + 1, temp.getY() - 1) == black
+						&& !toCheck.contains(new Coordinate(temp.getX() + 1, temp.getY() - 1))
+						&& !object.contains(new Coordinate(temp.getX() + 1, temp.getY() - 1))) {
+					toCheck.add(new Coordinate(temp.getX() + 1, temp.getY() - 1));
+				}
                 /* | | |X|
                  * | | | |
                  * | | | |
                  */
-                if (image.getRGB(temp.getX() + 1, temp.getY() + 1) == black
-                        && !toCheck.contains(new Coordinate(temp.getX() + 1,
-                                temp.getY() + 1))
-                        && !object.contains(new Coordinate(temp.getX() + 1,
-                                temp.getY() + 1))) {
-                    toCheck.add(new Coordinate(temp.getX() + 1, temp.getY() + 1));
-                }
+				if (image.getRGB(temp.getX() + 1, temp.getY() + 1) == black
+						&& !toCheck.contains(new Coordinate(temp.getX() + 1, temp.getY() + 1))
+						&& !object.contains(new Coordinate(temp.getX() + 1, temp.getY() + 1))) {
+					toCheck.add(new Coordinate(temp.getX() + 1, temp.getY() + 1));
+				}
                 /* |X| | |
                  * | | | |
                  * | | | |
                  */
-                if (image.getRGB(temp.getX() - 1, temp.getY() - 1) == black
-                        && !toCheck.contains(new Coordinate(temp.getX() - 1,
-                                temp.getY() - 1))
-                        && !object.contains(new Coordinate(temp.getX() - 1,
-                                temp.getY() - 1))) {
-                    toCheck.add(new Coordinate(temp.getX() - 1, temp.getY() - 1));
-                }
+				if (image.getRGB(temp.getX() - 1, temp.getY() - 1) == black
+						&& !toCheck.contains(new Coordinate(temp.getX() - 1, temp.getY() - 1))
+						&& !object.contains(new Coordinate(temp.getX() - 1, temp.getY() - 1))) {
+					toCheck.add(new Coordinate(temp.getX() - 1, temp.getY() - 1));
+				}
                 /* | | | |
                  * | | | |
                  * |X| | |
                  */
-                if (image.getRGB(temp.getX() - 1, temp.getY() + 1) == black
-                        && !toCheck.contains(new Coordinate(temp.getX() - 1,
-                                temp.getY() + 1))
-                        && !object.contains(new Coordinate(temp.getX() - 1,
-                                temp.getY() + 1))) {
-                    toCheck.add(new Coordinate(temp.getX() - 1, temp.getY() + 1));
-                }
+				if (image.getRGB(temp.getX() - 1, temp.getY() + 1) == black
+						&& !toCheck.contains(new Coordinate(temp.getX() - 1, temp.getY() + 1))
+						&& !object.contains(new Coordinate(temp.getX() - 1, temp.getY() + 1))) {
+					toCheck.add(new Coordinate(temp.getX() - 1, temp.getY() + 1));
+				}
                 /* | | | |
                  * |X| | |
                  * | | | |
                  */
-                if (image.getRGB(temp.getX() - 1, temp.getY()) == black
-                        && !toCheck.contains(new Coordinate(temp.getX() - 1,
-                                temp.getY()))
-                        && !object.contains(new Coordinate(temp.getX() - 1,
-                                temp.getY()))) {
-                    toCheck.add(new Coordinate(temp.getX() - 1, temp.getY()));
-                }
+				if (image.getRGB(temp.getX() - 1, temp.getY()) == black
+						&& !toCheck.contains(new Coordinate(temp.getX() - 1, temp.getY()))
+						&& !object.contains(new Coordinate(temp.getX() - 1, temp.getY()))) {
+					toCheck.add(new Coordinate(temp.getX() - 1, temp.getY()));
+				}
                 /* | | | |
                  * | | |X|
                  * | | | |
                  */
-                if (image.getRGB(temp.getX() + 1, temp.getY()) == black
-                        && !toCheck.contains(new Coordinate(temp.getX() + 1,
-                                temp.getY()))
-                        && !object.contains(new Coordinate(temp.getX() + 1,
-                                temp.getY()))) {
-                    toCheck.add(new Coordinate(temp.getX() + 1, temp.getY()));
-                }
-            }
-            toCheck.remove(temp);
-        }
+				if (image.getRGB(temp.getX() + 1, temp.getY()) == black
+						&& !toCheck.contains(new Coordinate(temp.getX() + 1, temp.getY()))
+						&& !object.contains(new Coordinate(temp.getX() + 1, temp.getY()))) {
+					toCheck.add(new Coordinate(temp.getX() + 1, temp.getY()));
+				}
+			}
+			toCheck.remove(temp);
+		}
 
-        return object;
+		return object;
 
-    }
-	
+	}
+
 	/**
-	 * This method calculate coordinate of projection from point onto line segment 
-	 * (builds a perpendicular). Formulas which are used in this method were 
-	 * derived from examples from website (russian): 
-	 * http://www.cleverstudents.ru/line_and_plane/projection_of_point_onto_line.html
-	 * @param a - first coordinate of line  segment
+	 * This method calculate coordinate of projection from point onto line
+	 * segment (builds a perpendicular). Formulas which are used in this method
+	 * were derived from examples from website (russian):
+	 * http://www.cleverstudents.ru/line_and_plane/projection_of_point_onto_line
+	 * .html
+	 * 
+	 * @param a - first coordinate of line segment
 	 * @param b - second coordinate of line segment
-	 * @param m - coordinate of point, from which we building a projection on line segment
+	 * @param m - coordinate of point, from which we building a projection on
+	 *            line segment
 	 * @return coordinate of projection on line segment from point m
 	 */
-	public Coordinate getPerpendicular(Coordinate a, Coordinate b, Coordinate m ){
+	public Coordinate getPerpendicular(Coordinate a, Coordinate b, Coordinate m) {
 		// Angular coefficient of line segment
-		double coefLS = (double)(b.getY() - a.getY()) / (double)(b.getX() - a.getX());
+		double coefLS = (double) (b.getY() - a.getY()) / (double) (b.getX() - a.getX());
 		// Angular coefficient of perpendicular to line segment
 		double coefP = -Math.pow(coefLS, -1);
 		// Calculate coordinates of projection on line segment
-		int x = (int) ((coefLS*a.getX()-a.getY() - coefP*m.getX()+m.getY())/(coefLS-coefP));
-		int y = (int) ((coefLS*(m.getX() - m.getY()/coefP -a.getX())+a.getY())/(1- coefLS/coefP));
+		int x = (int) ((coefLS * a.getX() - a.getY() - coefP * m.getX() + m.getY()) / (coefLS - coefP));
+		int y = (int) ((coefLS * (m.getX() - m.getY() / coefP - a.getX()) + a.getY()) / (1 - coefLS / coefP));
 		return new Coordinate(x, y);
 	}
-	
-	public LSegment getLongestProjection(ArrayList<Coordinate> list, LSegment line){
+
+	public LSegment getLongestProjection(ArrayList<Coordinate> list, LSegment line) {
 		ArrayList<LSegment> perpendiculars = new ArrayList<>();
 		for (Coordinate co : list) {
 			perpendiculars.add(new LSegment(getPerpendicular(line.getA(), line.getB(), co), co));
 		}
-		//Collections.sort(perpendiculars);
 		return new LSegment(Collections.max(perpendiculars).getA(), Collections.max(perpendiculars).getB());
-		
+
 	}
-	
+
 	int index = 5;
+
 	public ArrayList<LSegment> approximate(ArrayList<Coordinate> list, LSegment line, int side) {
-			
+
 		LSegment maxProj = this.getLongestProjection(list, line);
-		//if (lines.contains(line))
 		lines.remove(line);
 		lines.add(new LSegment(maxProj.getB(), line.getA()));
 		lines.add(new LSegment(maxProj.getB(), line.getB()));
 		ArrayList<Coordinate> listR = getHalf(maxProj, list, side);
-		ArrayList<Coordinate> listL = getHalf(maxProj, list, side*-1);
-		
-		for (Coordinate co : listR) {
-			//image.setRGB(co.getX(), co.getY(), 205);
-		}
-		//for (Coordinate co : listL) {
-			//image.setRGB(co.getX(), co.getY(), 205);
-		//}
-		
-		
+		ArrayList<Coordinate> listL = getHalf(maxProj, list, side * -1);
+
 		LSegment line1 = new LSegment(maxProj.getB(), line.getA());
 		LSegment line2 = new LSegment(maxProj.getB(), line.getB());
 		index--;
@@ -455,20 +424,20 @@ public class ProcessedImage {
 		}
 		return lines;
 	}
-	
+
 	public double getAngleLine(LSegment line1, LSegment line2) {
 		// Create two vectors from this coordinates to calculate it with formula
-		Coordinate vector1 = new Coordinate(line1.getB().getX() - line1.getA().getX(), 
-											line1.getB().getY() - line1.getA().getY());
-		Coordinate vector2 = new Coordinate(line2.getB().getX() - line2.getA().getX(), 
-											line2.getB().getY() - line2.getA().getY());
+		Coordinate vector1 = new Coordinate(line1.getB().getX() - line1.getA().getX(),
+				line1.getB().getY() - line1.getA().getY());
+		Coordinate vector2 = new Coordinate(line2.getB().getX() - line2.getA().getX(),
+				line2.getB().getY() - line2.getA().getY());
 		double angle = (vector1.getX() * vector2.getX() + vector1.getY() * vector2.getY())
 				/ (Math.sqrt(Math.pow(vector1.getX(), 2) + Math.pow(vector1.getY(), 2))
 						* Math.sqrt(Math.pow(vector2.getX(), 2) + Math.pow(vector2.getY(), 2)));
 		return angle;
 	}
-	
-	public void clear(){
+
+	public void clear() {
 		lines.clear();
 	}
 

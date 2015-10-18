@@ -83,17 +83,13 @@ public class FreeHand extends JPanel {
 		JButton save = new JButton("save");
 		save.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				 File outputfile = new File("saved.jpg");
-				    try {
-						ImageIO.write(image, "jpg", outputfile);
-						Thread.sleep(1000);
-						Recognize.main(null);
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					} catch (InterruptedException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+				File outputfile = new File("saved.jpg");
+				try {
+					ImageIO.write(image, "jpg", outputfile);
+					Recognize.main(null);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 				System.out.println("save");
 			}
 		});

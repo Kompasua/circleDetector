@@ -110,28 +110,28 @@ public class LSegment implements Comparable {
 		}
 		return 0;
 	}
-	
-	public ArrayList<LSegment> sortLines(ArrayList<LSegment> lines){
+
+	public ArrayList<LSegment> sortLines(ArrayList<LSegment> lines) {
 		ArrayList<LSegment> segmentsSorted = new ArrayList<>();
 		ArrayList<LSegment> curLines = new ArrayList<>();
 		curLines.addAll(lines);
 		segmentsSorted.add(curLines.get(0));
-		while(curLines.size() > 0){
-			LSegment temp = getNextLine(curLines, segmentsSorted.get(segmentsSorted.size()-1));
+		while (curLines.size() > 0) {
+			LSegment temp = getNextLine(curLines, segmentsSorted.get(segmentsSorted.size() - 1));
 			curLines.remove(temp);
 			segmentsSorted.add(temp);
 		}
 		return segmentsSorted;
 	}
-	
-	public LSegment getNextLine(ArrayList<LSegment> lines, LSegment initLine){
+
+	public LSegment getNextLine(ArrayList<LSegment> lines, LSegment initLine) {
 		for (LSegment line : lines) {
-			if ( (initLine.getA().equals(line.getA()) || initLine.getA().equals(line.getB()))
-					&& initLine.equals(line)==false){
+			if ((initLine.getA().equals(line.getA()) || initLine.getA().equals(line.getB()))
+					&& initLine.equals(line) == false) {
 				return line;
 			}
-			if ( (initLine.getB().equals(line.getA()) || initLine.getB().equals(line.getB()))
-					&& initLine.equals(line)==false){
+			if ((initLine.getB().equals(line.getA()) || initLine.getB().equals(line.getB()))
+					&& initLine.equals(line) == false) {
 				return line;
 			}
 		}

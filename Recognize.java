@@ -30,7 +30,7 @@ public class Recognize {
 
 	public void start() {
 
-		long startTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis(); // Store execution time
 		try {
 			openImage();
 		} catch (MalformedURLException e) {
@@ -104,11 +104,13 @@ public class Recognize {
 
 		angles.add(180 - Math.toDegrees(
 				Math.acos(pimage.getAngleLine(segmentsSorted.get(0), segmentsSorted.get(segmentsSorted.size() - 1)))));
-
+		
+		// Display angles array
 		for (double num : angles) {
 			// System.out.println(num);
 		}
-
+		
+		// Remove
 		if (Collections.max(angles) - Collections.min(angles) < 10) {
 			System.out.println("Yes");
 		} else {

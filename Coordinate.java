@@ -4,7 +4,7 @@
  * 
  * @author kompas
  *
- *         TODO not sure if set methods are relevant.
+ * TODO not sure if set methods are relevant.
  */
 public class Coordinate {
 	public int x;
